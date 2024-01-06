@@ -1,5 +1,5 @@
 #!/bin/bash
-
+url="https://raw.githubusercontent.com/vpsnetdk/chukk-script/main/ejecutables"
 BadVPN () {
 msg -bar 
 pid_badvpn=$(ps x | grep badvpn | grep -v grep | awk '{print $1}')
@@ -13,7 +13,7 @@ msg -bar
     if [[ ! -e /bin/badvpn-udpgw ]]; then
 	echo -ne "	    DESCARGANDO BINARIO UDP .."
   [[ $(uname -m 2> /dev/null) != x86_64 ]] && {
-  if wget -O /bin/badvpn-udpgw https://github.com/emirjorge/Script-Z/raw/master/CHUMO/Recursos/ferramentas/badvpn-udpgw-arm &>/dev/null ; then
+  if wget -O /bin/badvpn-udpgw ${url}/badvpn-udpgw-arm &>/dev/null ; then
   chmod 777 /bin/badvpn-udpgw
   msg -verd "[OK]"  
   else    
@@ -25,7 +25,7 @@ msg -bar
   exit 0    
   fi
   } || {   
-  if wget -O /bin/badvpn-udpgw https://github.com/emirjorge/Script-Z/raw/master/CHUMO/Recursos/ferramentas/badvpn-udpgw-plus &>/dev/null ; then
+  if wget -O /bin/badvpn-udpgw ${url}/badvpn-udpgw-plus &>/dev/null ; then
   chmod 777 /bin/badvpn-udpgw
   msg -verd "[OK]"    
   else    
