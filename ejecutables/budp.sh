@@ -82,7 +82,7 @@ msg -bar
 else
 clear&&clear
 msg -bar
-msg -ama "      Administrador BadVPN UDP | @ChumoGH•Plus"
+msg -ama "      Administrador BadVPN UDP | ChuKK-SCRIPT"
 msg -bar
 menu_func "AÑADIR 1+ PUERTO BadVPN $_pid" "$(msg -verm2 "Detener BadVPN")" #"$(msg -ama "Reiniciar BadVPN")"
  echo -ne "$(msg -verd " [0]") $(msg -verm2 "=>>") " && msg -bra "\033[1;41m Volver "
@@ -126,6 +126,6 @@ BadVPN
 msg -bar
 clear&&clear
 msg -bar
-toilet -f pagga "ChumoGH-UDP" | lolcat
+toilet -f pagga "ChuKK-SCRIPT=UDP" | lolcat
 msg -bar
 return
