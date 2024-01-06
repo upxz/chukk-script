@@ -1,8 +1,5 @@
 #!/bin/bash
-#CREADOR Henry Chumo | 06/06/2022
-#REFACTORY | 16/10/2022
-#Alias : @drowkid01
-# -*- ENCODING: UTF-8 -*-
+
 time=$(date +%s)
 export ADM='/etc/adm-lite/userDIR/'
 touch /root/user

@@ -1,5 +1,4 @@
 #!/bin/sh
-#Autor: Henry Chumo 
 #Alias : drowkid01
 config="/etc/v2ray/config.json"
 temp="/etc/v2ray/temp.json"

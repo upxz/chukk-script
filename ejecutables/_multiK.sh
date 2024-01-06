@@ -1,14 +1,5 @@
 #!/bin/bash
 
-function chekKEY {
-_off="\033[1;31mOFF\033[0m"
-_on="\033[1;32mON\033[0m"
-Key="$(cat /etc/cghkey)" 
-[[ -z $Key ]] && exit&&exit
-}
-
-[[ $1 = '--check' ]] && chekKEY &> /dev/null 2>&1
-
 tput cuu1 && tput dl1
 tput cuu1 && tput dl1
 tput cuu1 && tput dl1

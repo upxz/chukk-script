@@ -328,7 +328,6 @@ mkdir /root/.config/clash 1> /dev/null 2> /dev/null
 #wget -q -O /root/.config/clash/clash.gz https://github.com/Dreamacro/clash/releases/download/v1.4.2/clash-linux-amd64-v1.4.2.gz
 #gzip -d /root/.config/clash/clash.gz
 #chmod +x /root/.config/clash/clash
-echo -e "🦎” Cargando Configuracion del Repositorio Original 匚卄ㄩ爪ㄖᎶ卄"
 fun_bar 'go get -u -v github.com/Dreamacro/clash' # 1> /dev/null 2> /dev/null
 clear
 figlet -p -f smslant < /root/name
@@ -336,7 +335,7 @@ echo -e "[\033[1;31m-\033[1;33m]\033[1;31m \033[1;33m"
 echo -e "\033[1;33mÎ” Ingresa tu Whatsapp junto a tu codigo de Pais"
 read -p " Ejemplo: +593987072611 : " numwt
 if [[ -z $numwt ]]; then
-numwt="【＋５９３９８７０７２６１１】"
+numwt=""
 fi
 echo -e "[\033[1;31m-\033[1;33m]\033[1;31m \033[1;33m"
 echo -e "\033[1;33mÎ” Ingresa Clase de Servidor ( Gratis - PREMIUM )"

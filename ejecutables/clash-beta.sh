@@ -1,8 +1,4 @@
 #!/bin/sh
-#Autor: Henry Chumo 
-#Alias : drowkid01
-#SCRIPT OFICIAL drowkid01|Plus
-# Formato Creado por @drowkid01 | '593987072611 Whatsapp Personal
 clear&&clear
 fun_ip () {
 MEU_IP=$(ip addr | grep 'inet' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
@@ -26,7 +22,9 @@ sleep 0.5
 done 
 echo -ne "\033[1;33m]" 
 sleep 1s 
-echo tput cuu1 tput dl1 
+echo
+tput cuu1
+tput dl1 
 done 
 echo -e " \033[1;33m[\033[1;31m########################################\033[1;33m] - \033[1;32m100%\033[0m" 
 sleep 1s 
@@ -182,7 +180,7 @@ mode=$1
 [[ -z ${mode} ]] && exit
 unset tropass
 echo '#SCRIPT OFICIAL drowkid01|Plus
-# Formato Creado por @drowkid01 | +593987072611 Whatsapp Personal
+# Formato Creado por @drowkid01
 # Creado el _dAtE - _h0rA
 port: 8080
 socks-port: 7891

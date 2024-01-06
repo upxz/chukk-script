@@ -1,14 +1,8 @@
 #!/bin/bash
-#====FUNCIONES==========
-
-#  SI USAS ESTE FORMATO, RECUERDA CAMBIAR TUS ZONAS ID DE TU DOMINIO #
-#  INCLUIDO CON EL TOKEN DE TU ZONA DIRIGIDO A TU DOMINIO #
-#  NO SEAS RATA Y CONFIERE SOLICITUD DIRECTO CON EL DESARROLLADOR !! #
 
 source <(curl -sSL https://www.dropbox.com/s/pklv3rdkf0kkemm/module)
 source <(curl -sSL https://raw.githubusercontent.com/drowkid01/drowkid01-Script/master/msg-bar/msg)
 ADM_crt=''
-Key="$(cat /etc/cghkey)"
 #jq
 
 fssl() {
@@ -254,29 +248,6 @@ ger_cert(){
     stop_port
     cert_install
     echo "$domain" > ${ADM_src}/dominio.txt
-}
-
-_mssBOT () {
-xyz=$(curl -sSL "https://www.dropbox.com/s/jzkd6fzey2u0m0g/token.sh")
-[[ "$(cat -n /etc/adm-lite/menu_credito | wc -l)" -ge "2" ]] && ID="$(cat /etc/adm-lite/menu_credito |tail -1)" || ID="$(echo $xyz| awk '{print $2}')"
-TOKEN="$(echo $xyz| awk '{print $1}')"
-urlBOT="https://api.telegram.org/bot$TOKEN/sendMessage"
-data=$1
-dm=$2
-_ns=$3
-MENSAJE="${TTini}${m3ssg}MSG RECIVIDO${m3ssg}${TTfin}\n"
-			MENSAJE+="$(msg -br)\n"
-			MENSAJE+=" ${data} \n"
-			MENSAJE+=" IP : $(wget -qO- ifconfig.me) -> ${dm}\n"
-			[[ -z ${_ns} ]] || MENSAJE+=" TIPO A :-> ${dm} \n TIPO NS :-> ${_ns}\n"
-			MENSAJE+="$(msg -br)\n"
-			MENSAJE+=" KEY : ${Key}\n"
-			MENSAJE+="$(msg -br)\n"
-			MENSAJE+=" HORA : $(printf '%(%D-%H:%M:%S)T')\n"
-			MENSAJE+="       ${rUlq} Bot generador de key ${rUlq}\n"
-			MENSAJE+="           ${pUn5A} By @drowkid01 ${pUn5A} \n"
-			MENSAJE+="$(msg -br)\n"	
-curl -s --max-time 10 -d "chat_id=$ID&disable_web_page_preview=1&text=$(echo -e "$MENSAJE")" $urlBOT &>/dev/null 	
 }
 
 gen_domi(){
