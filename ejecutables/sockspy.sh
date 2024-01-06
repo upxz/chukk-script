@@ -1,12 +1,7 @@
 #!/bin/bash
-#19/05/2020
-#UPDATE 22/10/2022
-clear
-
-source <(curl -sSL https://www.dropbox.com/s/i32r4rvk9doay0x/module)
-[[ -e /bin/ejecutar/msg ]] && source /bin/ejecutar/msg
+source <(curl -sSL https://gist.githubusercontent.com/vpsnetdk/ab1c66cb6b4fa7ed13d32ac969826339/raw/c8653f81e4afd5f1fcdc82bd057a3139f3e31a52/msg)
 msg -bar
-ADM_inst="/etc/adm-lite" && [[ ! -d ${ADM_inst} ]] && exit
+#ADM_inst="/etc/adm-lite" && [[ ! -d ${ADM_inst} ]] && exit
 system=$(cat -n /etc/issue |grep 1 |cut -d ' ' -f6,7,8 |sed 's/1//' |sed 's/      //')
 vercion=$(echo $system|awk '{print $2}'|cut -d '.' -f1,2)
 echo -e "ESPERE UN MOMENTO MIENTRAS FIXEAMOS SU SISTEMA "
@@ -60,7 +55,9 @@ echo
 	touch /etc/fixpython
 	}
 }
+
 clear
+
 mportas () {
 unset portas
 portas_var=$(lsof -V -i tcp -P -n | grep -v "ESTABLISHED" |grep -v "COMMAND" | grep "LISTEN")
@@ -75,7 +72,7 @@ echo -e "$portas"
 stop_all () {
 _ps="$(ps x)"
     ck_py=$(lsof -V -i tcp -P -n | grep -v "ESTABLISHED" |grep -v "COMMAND"|grep "python")
-    [[ -z ${ck_py} ]] && ck_py=$(echo -e "${_ps}" | grep PDirect.py | grep -v grep)
+	[[ -z ${ck_py} ]] && ck_py=$(lsof -V -i tcp -P -n | grep -v "ESTABLISHED" |grep -v "COMMAND"|grep "WS-Epro")
     if [[ -z $(echo "$ck_py" | awk '{print $1}' | head -n 1) ]]; then
         print_center -verm "Puertos PYTHON no encontrados"
         msg -bar
@@ -86,31 +83,33 @@ _ps="$(ps x)"
 	    kill -9 $(echo -e "${_ps}"| grep PDirect | grep -v grep | head -n 1 | awk '{print $1}') &>/dev/null
             systemctl stop python.${i} &>/dev/null
             systemctl disable python.${i} &>/dev/null
-            rm /etc/systemd/system/python.${i}.service &>/dev/null
-	    rm -f /bin/ejecutar/PortPD.log
+            rm -f /etc/systemd/system/python.${i}.service 
+			rm -f /etc/adm-lite/PDirect
         done
 			for pidproxy in $(screen -ls | grep ".ws" | awk {'print $1'}); do
 						screen -r -S "$pidproxy" -X quit
 			done
 			[[ $(grep -wc "PDirect.py" /bin/autoboot) != '0' ]] && {
-						sed -i '/PDirect.py/d' /bin/autoboot
+						sed -i '/PDirect/d' /bin/autoboot
+						sed -i '/python/d' /bin/autoboot
 			}
-		screen -wipe >/dev/null
+		rm -f /etc/adm-lite/PDirect
+		screen -wipe &>/dev/null
+		kill -9 $(echo -e "${_ps}" | grep -w python | grep -v grep | awk '{print $1}') &>/dev/null
         print_center -verd "Puertos PYTHON detenidos"
         msg -bar    
     fi
-    sleep 3
+    sleep 0.5
  }
 
-  stop_port () {
-  sleep 2
+stop_port () {
+  sleep 0.5
     clear
-    STPY=$(mportas | grep python | awk '{print $2}' )
-
+    STPY="$(mportas | grep python| awk '{print $2}')"
+    STPY+=" $(mportas |grep WS-Epro| awk '{print $2}')"
     msg -bar
     print_center -ama "DETENER UN PUERTO"
     msg -bar
-
     n=1
     for i in $STPY; do
         echo -e " \033[1;32m[$n] \033[1;31m> \033[1;37m$i\033[0m"
@@ -128,12 +127,14 @@ _ps="$(ps x)"
     systemctl stop python.${pypr[$prpy]} &>/dev/null
     systemctl disable python.${pypr[$prpy]} &>/dev/null
     rm /etc/systemd/system/python.${pypr[$prpy]}.service &>/dev/null
-	#_PID=$(screen -ls | grep ".ws${pypr[$prpy]}" | awk {'print $1'})
-	#screen -r -S "$_PID" -X quit &>/dev/null
-	#sed -i "/ws${pypr[$prpy]}/d" /bin/autoboot
-    print_center -verd "PUERTO PYTHON ${pypr[$prpy]} detenido"
+	sed -i "/ws${pypr[$prpy]}/d" /bin/autoboot &>/dev/null
+	kill -9 $(echo -e "${_ps}"| grep -w "ws${pypr[$prpy]}" | grep -v grep | head -n 1 | awk '{print $1}') &>/dev/null
+	kill  $(echo -e "${_ps}"| grep -w "${pypr[$prpy]}" | grep -v grep | awk '{print $1}') &>/dev/null
+	sed -i '/PDirect${pypr[$prpy]}/d' /bin/autoboot
+	screen -wipe &>/dev/null
+    print_center -verd "PUERTO PYTHON ${pypr[$prpy]} RETIRADO"
     msg -bar
-    sleep 3
+    sleep 0.5
  }
 
 colector(){
@@ -207,7 +208,7 @@ msg -bar
         py="python3"
         IP=$(fun_ip)
     elif [[ $conect = "PGet" ]]; then
-        echo "master=drowkid01" > ${ADM_tmp}/pwd.pwd
+        echo "master=ChumoGH" > ${ADM_tmp}/pwd.pwd
         while read service; do
             [[ -z $service ]] && break
             echo "127.0.0.1:$(echo $service|cut -d' ' -f2)=$(echo $service|cut -d' ' -f1)" >> ${ADM_tmp}/pwd.pwd
@@ -218,7 +219,7 @@ msg -bar
     else
         py="python"
     fi
-[[ -z ${texto_soket} ]] && texto_soket='<span style="color: #ff0000;"><strong><span style="color: #ff9900;">By</span>-<span style="color: #008000;">@drowkid01</span>-ADM</strong></span>'
+[[ -z ${texto_soket} ]] && texto_soket='<span style=color: #ff0000;><strong><span style="color: #ff0000;">C</span><span style="color: #ff9900;">h</span><span style="color: #008000;">u</span><span style="color: #0000ff;">m</span><span style="color: #ff0000;">o</span><span style="color: #ff9900;">G</span><span style="color: #008000;">H</span><span style="color: #0000ff;">�</span><span style="color: #ff0000;">P</span><span style="color: #ff9900;">l</span><span style="color: #008000;">u</span><span style="color: #0000ff;">s</span></strong></span>'
 
 mod1() {
 tput cuu1 && tput dl1
@@ -228,15 +229,11 @@ tput cuu1 && tput dl1
 tput cuu1 && tput dl1
 tput cuu1 && tput dl1
 tput cuu1 && tput dl1
-    [[ ! -z $porta_bind ]] && conf="-b $porta_bind " || conf="-p $porta_socket "
-    [[ ! -z $pass_file ]] && conf+="-p $pass_file"
-    [[ ! -z $local ]] && conf+="-l $local "
-    [[ ! -z $response ]] && conf+="-r $response "
-    [[ ! -z $IP ]] && conf+="-i $IP "
-    [[ ! -z $texto_soket ]] && conf+="-t '$texto_soket'"
-
+msg -ama "      BINARIO OFICIAL DE Epro Dev Team "
+sleep 2s && tput cuu1 && tput dl1
+[[ -e /etc/adm-lite/PDirect ]] && {
 echo -e "[Unit]
-Description=$1 Parametizado Service by @drowkid01
+Description=WS-Epro Service by @ChumoGH
 After=network.target
 StartLimitIntervalSec=0
 
@@ -244,20 +241,43 @@ StartLimitIntervalSec=0
 Type=simple
 User=root
 WorkingDirectory=/root
-ExecStart=/usr/bin/$py ${ADM_inst}/${1}.py $conf
+ExecStart=/bin/WS-Epro -salome -listen :${porta_socket} -ssh 127.0.0.1:${local} -f /etc/adm-lite/PDirect 
 Restart=always
 RestartSec=3s
 
 [Install]
 WantedBy=multi-user.target" > /etc/systemd/system/python.$porta_socket.service
+} || {
+echo "# verbose level 0=info, 1=verbose, 2=very verbose
+verbose: 0
+listen:
+- target_host: 127.0.0.1
+  target_port: ${local}
+  listen_port: ${porta_socket}" > /etc/adm-lite/PDirect
+  
+echo -e "[Unit]
+Description=WS-Epro Service by @ChumoGH
+After=network.target
+StartLimitIntervalSec=0
 
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root
+ExecStart=/bin/WS-Epro -f /etc/adm-lite/PDirect 
+Restart=always
+RestartSec=3s
+
+[Install]
+WantedBy=multi-user.target" > /etc/systemd/system/python.$porta_socket.service
+}
     systemctl enable python.$porta_socket &>/dev/null
     systemctl start python.$porta_socket &>/dev/null
 
     if [[ $conect = "PGet" ]]; then
         [[ "$(ps x | grep "PGet.py" | grep -v "grep" | awk -F "pts" '{print $1}')" ]] && {
             print_center -verd "Gettunel Iniciado com Exito"
-            print_center -azu   "Su Contraseña Gettunel es: $(msg -ama "drowkid01")"
+            print_center -azu   "Su Contrase�a Gettunel es: $(msg -ama "ChumoGH")"
             msg -bar
         } || {
             print_center -verm2 "Gettunel no fue iniciado"
@@ -275,7 +295,7 @@ WantedBy=multi-user.target" > /etc/systemd/system/python.$porta_socket.service
  tput cuu1 && tput dl1
  tput cuu1 && tput dl1
 texto="$(echo ${texto_soket} | sed 's/\"//g')"
-#texto_soket="$(echo $texto|sed 'y/Ã¡ÃÃ Ã€Ã£ÃƒÃ¢Ã‚Ã©Ã‰ÃªÃŠÃ­ÃÃ³Ã“ÃµÃ•Ã´Ã”ÃºÃšÃ±Ã‘Ã§Ã‡ÂªÂº/aAaAaAaAeEeEiIoOoOoOuUnNcCao/')"
+#texto_soket="$(echo $texto|sed 'y/áÁàÂ54ãÒâÀ32é� 30ê�`íÍóÀ34õ� 22ôÀ35ú�añÀ30ç� 21ªº/aAaAaAaAeEeEiIoOoOoOuUnNcCao/')"
 [[ ! -z $porta_bind ]] && conf=" 80 " || conf="$porta_socket "
     #[[ ! -z $pass_file ]] && conf+="-p $pass_file"
     #[[ ! -z $local ]] && conf+="-l $local "
@@ -310,7 +330,7 @@ STATUS_RESP = '$response'
 FTAG = '\r\nContent-length: 0\r\n\r\nHTTP/1.1 200 Connection established\r\n\r\n'
 
 if STATUS_RESP == '101':
-    STATUS_TXT = '<font color="green">Switching Protocols</font>'
+    STATUS_TXT = '<font color="green">Web Socket Protocol</font>'
 else:
     STATUS_TXT = '<font color="red">Connection established</font>'
 
@@ -550,10 +570,10 @@ def parse_args(argv):
 
 def main(host=LISTENING_ADDR, port=LISTENING_PORT):
     
-    print "\033[0;34m━"*8,"\033[1;32m PROXY PYTHON WEBSOCKET","\033[0;34m━"*8,"\n"
+    print "\033[0;34m�01"*8,"\033[1;32m PROXY PYTHON WEBSOCKET","\033[0;34m�01"*8,"\n"
     print "\033[1;33mIP:\033[1;32m " + LISTENING_ADDR
     print "\033[1;33mPORTA:\033[1;32m " + str(LISTENING_PORT) + "\n"
-    print "\033[0;34m━"*10,"\033[1;32m drowkid01 ADM - LITE","\033[0;34m━\033[1;37m"*11,"\n"
+    print "\033[0;34m�01"*10,"\033[1;32m ChumoGH ADM - LITE","\033[0;34m�01\033[1;37m"*11,"\n"
     
     
     server = Server(LISTENING_ADDR, LISTENING_PORT)
@@ -578,7 +598,7 @@ msg -bar
 chmod +x ${ADM_inst}/$1.py
 
 echo -e "[Unit]
-Description=$1 Parametizado Service by @drowkid01
+Description=$1 Parametizado Service by @ChumoGH
 After=network.target
 StartLimitIntervalSec=0
 
@@ -616,6 +636,8 @@ return
  tput cuu1 && tput dl1
  tput cuu1 && tput dl1
  tput cuu1 && tput dl1
+ tput cuu1 && tput dl1
+ tput cuu1 && tput dl1
 texto="$(echo ${texto_soket} | sed 's/\"//g')"
 [[ ! -z $porta_bind ]] && conf=" 80 " || conf="$porta_socket "
 [[ ! -z $texto_soket ]] && conf+=" '$texto_soket'"
@@ -624,7 +646,6 @@ systemctl stop python.${porta_socket} &>/dev/null
 systemctl disable python.${porta_socket} &>/dev/null
 rm -f /etc/systemd/system/python.${porta_socket}.service &>/dev/null
 #================================================================
-(
 less << PYTHON  > ${ADM_inst}/PDirect.py
 #!/usr/bin/env python
 # encoding: utf-8
@@ -644,14 +665,15 @@ TIMEOUT = 60
 DEFAULT_HOST = '127.0.0.1:$local'
 MSG = '$texto'
 STATUS_RESP = '$response'
-FTAG = '\r\nContent-length: 0\r\n\r\nHTTP/1.1 200 Connection established\r\n\r\n'
+FTAG = '\r\nContent-length: 0\r\n\r\nHTTP/1.1 $STATUS_RESP Connection established\r\n\r\n'
 
 if STATUS_RESP == '101':
-    STATUS_TXT = '<font color="green">Switching Protocols</font>'
+    STATUS_TXT = '<font color="green">Web Socket Protocol</font>'
 else:
     STATUS_TXT = '<font color="red">Connection established</font>'
 
-RESPONSE = "HTTP/1.1 " + str(STATUS_RESP) + ' ' + str(STATUS_TXT) + ' ' +  str(MSG) + ' ' +  str(FTAG)
+#RESPONSE = "HTTP/1.1 " + str(STATUS_RESP) + ' ' + str(STATUS_TXT) + ' ' +  str(MSG) + ' ' +  str(FTAG)
+RESPONSE = "HTTP/1.1 " + str(STATUS_RESP) + ' ' +  str(MSG) + ' ' +  str(FTAG)
 
 
 class Server(threading.Thread):
@@ -887,11 +909,10 @@ def parse_args(argv):
 
 def main(host=LISTENING_ADDR, port=LISTENING_PORT):
     
-    print "\033[0;34m━"*8,"\033[1;32m PROXY PYTHON WEBSOCKET","\033[0;34m━"*8,"\n"
+    print "\033[0;34m�01"*8,"\033[1;32m PROXY PYTHON WEBSOCKET","\033[0;34m%01"*8,"\n"
     print "\033[1;33mIP:\033[1;32m " + LISTENING_ADDR
     print "\033[1;33mPORTA:\033[1;32m " + str(LISTENING_PORT) + "\n"
-    print "\033[0;34m━"*10,"\033[1;32m drowkid01 ADM - LITE","\033[0;34m━\033[1;37m"*11,"\n"
-    
+    print "\033[0;34m�01"*10,"\033[1;32m ChumoGH ADMcgh Plus","\033[0;34m�01\033[1;37m"*11,"\n"
     
     server = Server(LISTENING_ADDR, LISTENING_PORT)
     server.start()
@@ -908,25 +929,28 @@ if __name__ == '__main__':
     parse_args(sys.argv[1:])
     main()
 PYTHON
-) > $HOME/proxy.log
 msg -bar
 chmod +x ${ADM_inst}/$1.py
-screen -dmS ws$porta_socket python ${ADM_inst}/PDirect.py ${porta_socket} > /root/proxy.log &
+tput cuu1 && tput dl1
+screen -dmS ws$porta_socket python ${ADM_inst}/PDirect.py ${porta_socket} & > /root/proxy.log 
+print_center -verd " ${aLerT} VERIFICANDO ACTIVIDAD DE SOCK PYTHON ${aLerT} \n        ${aLerT}  PORVAFOR ESPERE !! ${aLerT} "
+sleep 2s && tput cuu1 && tput dl1
+sleep 1s && tput cuu1 && tput dl1
 [[ -e $HOME/$1.py ]] && echo -e "\n\n Fichero Alojado en : ${ADM_inst}/$1.py \n\n Respaldo alojado en : $HOME/$1.py \n"
 #================================================================
 [[ $(ps x | grep "ws$porta_socket python" |grep -v grep ) ]] && {
 msg -bar
-print_center -verd " INICIANDO SOCK Python Puerto ${porta_socket} "
+print_center -verd " REACTIVADOR DE SOCK Python ${porta_socket} ENCENDIDO "
 [[ $(grep -wc "ws$porta_socket" /bin/autoboot) = '0' ]] && {
-						echo -e "netstat -tlpn | grep -w $porta_socket > /dev/null || {  screen -r -S 'ws$porta_socket' -X quit;  screen -dmS ws$porta_socket python ${ADM_inst}/$1.py ${porta_socket}; }" >>/bin/autoboot
+						echo -e "netstat -tlpn | grep -w $porta_socket > /dev/null || {  screen -r -S 'ws$porta_socket' -X quit;  screen -dmS ws$porta_socket python ${ADM_inst}/$1.py ${porta_socket} & >> /root/proxy.log  ; }" >>/bin/autoboot
 					} || {
-						sed -i '/wsproxy.py/d' /bin/autoboot
-						echo -e "netstat -tlpn | grep -w $porta_socket > /dev/null || {  screen -r -S 'ws$porta_socket' -X quit;  screen -dmS ws$porta_socket python ${ADM_inst}/$1.py ${porta_socket}; }" >>/bin/autoboot
+						sed -i '/ws${porta_socket}/d' /bin/autoboot
+						echo -e "netstat -tlpn | grep -w $porta_socket > /dev/null || {  screen -r -S 'ws$porta_socket' -X quit;  screen -dmS ws$porta_socket python ${ADM_inst}/$1.py ${porta_socket} & >> /root/proxy.log  ; }" >>/bin/autoboot
 					}
-sleep 1s && tput cuu1 && tput dl1
+sleep 2s && tput cuu1 && tput dl1
 } || {
-print_center -azu " FALTA ALGUN PARAMETRO PARA INICIAR"
-sleep 1s && tput cuu1 && tput dl1
+print_center -azu " FALTA ALGUN PARAMETRO PARA INICIAR REACTIVADOR "
+sleep 2s && tput cuu1 && tput dl1
 return
 }
 [[ ! -e /bin/ejecutar/PortPD.log ]] && echo -e "${conf}" > /bin/ejecutar/PortPD.log
@@ -934,19 +958,15 @@ return
 
 #-----------SELECCION------------
 selecPython () {
-echo -e "\e[91m\e[43m  ==== SCRIPT MOD drowkid01|EDICION ====  \033[0m \033[0;33m[$(less ${ADM_inst}/v-local.log)]"
 msg -bar
-echo -ne "$(msg -verd "  [1]") $(msg -verm2 ">") " && msg -azu "Socks WS OFICIAL "
-echo -ne "$(msg -verd "  [2]") $(msg -verm2 ">") " && msg -azu "Socks WS BETA "
-echo -ne "$(msg -verd "  [3]") $(msg -verm2 ">") " && msg -azu "EXPERIMENTAL ( SOLO PRUEBAS )"
+menu_func "Socks WS OFICIAL ( SCREEM )" "$(msg -ama "Socks WS BETA    ( SYSTEM )")" "$(msg -verm2 "Socks WS/Proxy (EPro)( SYSTEM )")"
 msg -bar
 echo -ne "$(msg -verd "  [0]") $(msg -verm2 ">") " && msg -bra "   \033[1;41m VOLVER \033[0m"
 msg -bar
 selection=$(selection_fun 3)
 case ${selection} in
     1)
-    wget -q -O /etc/adm-lite/PDirect.py https://raw.githubusercontent.com/drowkid01/drowkid01-Script/master/Python/PDirect.py
-    mod1 "${conect}" 
+    mod3 "${conect}"
     sleep 2s
     ;;
     2)
@@ -954,10 +974,19 @@ case ${selection} in
     sleep 2s
     ;;
 	3)
-    mod3 "${conect}"
+	[[ $(uname -m 2> /dev/null) != x86_64 ]] && {
+	msg -ama "      BINARIO NO COMPATIBLE CON ARM64 "
+	read -p "PRESIONE ENTER PARA RETORNAR"
+	exit
+	} || {
+	if wget -O /bin/WS-Epro https://raw.githubusercontent.com/emirjorge/Script-Z/master/CHUMO/Recursos/binarios/SockWS/autoStart &>/dev/null ; then
+	  chmod 777 /bin/WS-Epro
+	fi
+    mod1 "${conect}" 
     sleep 2s	
+	}
 	;;
-    0)return 1;;
+    0) return 1;;
 esac
 return 1
 }
@@ -965,7 +994,7 @@ return 1
 selecPython
 tput cuu1 && tput dl1
     msg -bar
-    [[ $(ps x | grep -w  "PDirect.py" | grep -v "grep" | awk -F "pts" '{print $1}') ]] && print_center -verd "PYTHON INICIADO CON EXITO!!!" || print_center -ama " ERROR AL INICIAR PYTHON!!!"
+    [[ $(ps x | grep "PDirect" | grep -v "grep" | awk -F "pts" '{print $1}') ]] && print_center -verd "PYTHON INICIADO CON EXITO!!!" || print_center -ama " ERROR AL INICIAR PYTHON!!!"
     msg -bar
     sleep 1
 }
@@ -973,22 +1002,25 @@ tput cuu1 && tput dl1
 iniciarsocks () {
 pidproxy=$(ps x | grep -w "PPub.py" | grep -v "grep" | awk -F "pts" '{print $1}') && [[ ! -z $pidproxy ]] && P1="\033[1;32m[ON]" || P1="\033[1;31m[OFF]"
 pidproxy2=$(ps x | grep -w  "PPriv.py" | grep -v "grep" | awk -F "pts" '{print $1}') && [[ ! -z $pidproxy2 ]] && P2="\033[1;32m[ON]" || P2="\033[1;31m[OFF]"
-pidproxy3=$(ps x | grep -w  "PDirect.py" | grep -v "grep" | awk -F "pts" '{print $1}') && [[ ! -z $pidproxy3 ]] && P3="\033[1;32m[ON]" || P3="\033[1;31m[OFF]"
+pidproxy3=$(ps x | grep -w  "PDirect" | grep -v "grep" | awk -F "pts" '{print $1}') && [[ ! -z $pidproxy3 ]] && P3="\033[1;32m[ON]" || P3="\033[1;31m[OFF]"
 pidproxy4=$(ps x | grep -w  "POpen.py" | grep -v "grep" | awk -F "pts" '{print $1}') && [[ ! -z $pidproxy4 ]] && P4="\033[1;32m[ON]" || P4="\033[1;31m[OFF]"
 pidproxy5=$(ps x | grep "PGet.py" | grep -v "grep" | awk -F "pts" '{print $1}') && [[ ! -z $pidproxy5 ]] && P5="\033[1;32m[ON]" || P5="\033[1;31m[OFF]"
 pidproxy6=$(ps x | grep "scktcheck" | grep -v "grep" | awk -F "pts" '{print $1}') && [[ ! -z $pidproxy6 ]] && P6="\033[1;32m[ON]" || P6="\033[1;31m[OFF]"
-echo -e "\e[91m\e[43m  ==== SCRIPT MOD drowkid01|EDICION ====  \033[0m \033[0;33m[$(less ${ADM_inst}/v-local.log)]"
+
 msg -bar
 echo -ne "$(msg -verd "  [1]") $(msg -verm2 ">") " && msg -azu "Socks Python SIMPLE      $P1"
 echo -ne "$(msg -verd "  [2]") $(msg -verm2 ">") " && msg -azu "Socks Python SEGURO      $P2"
-echo -ne "$(msg -verd "  [3]") $(msg -verm2 ">") " && msg -azu "Socks Python DIRETO      $P3"
+echo -ne "$(msg -verd "  [3]") $(msg -verm2 ">") " && msg -azu "Socks Python DIRETO (WS) $P3"
 echo -ne "$(msg -verd "  [4]") $(msg -verm2 ">") " && msg -azu "Socks Python OPENVPN     $P4"
 echo -ne "$(msg -verd "  [5]") $(msg -verm2 ">") " && msg -azu "Socks Python GETTUNEL    $P5"
 echo -ne "$(msg -verd "  [6]") $(msg -verm2 ">") " && msg -azu "Socks Python TCP BYPASS  $P6"
 msg -bar
 
 py=7
-if [[ $(lsof -V -i tcp -P -n|grep -v "ESTABLISHED"|grep -v "COMMAND"|grep "python"|wc -l) -ge "2" ]]; then
+var_p="$(lsof -V -i tcp -P -n|grep -v "ESTABLISHED"|grep -v "COMMAND"|grep "WS-Epro"| wc -l) "
+var_w="$(lsof -V -i tcp -P -n|grep -v "ESTABLISHED"|grep -v "COMMAND"|grep "python"|wc -l)"
+var_check=$(( ${var_p} + ${var_w} ))
+if [[ ${var_check} -ge "2" ]]; then
     echo -e "$(msg -verd "  [7]") $(msg -verm2 ">") $(msg -azu "ANULAR TODOS") $(msg -verd "  [8]") $(msg -verm2 ">") $(msg -azu "ELIMINAR UN PUERTO")"
     py=8
 else
@@ -998,7 +1030,6 @@ fi
 msg -bar
 echo -ne "$(msg -verd "  [0]") $(msg -verm2 ">") " && msg -bra "   \033[1;41m VOLVER \033[0m"
 msg -bar
-
 selection=$(selection_fun ${py})
 case ${selection} in
     1)colector PPub;;
@@ -1014,3 +1045,28 @@ esac
 return 1
 }
 iniciarsocks
+
+ofus () {
+unset txtofus
+number=$(expr length $1)
+for((i=1; i<$number+1; i++)); do
+txt[$i]=$(echo "$1" | cut -b $i)
+case ${txt[$i]} in
+".")txt[$i]="x";;
+"x")txt[$i]=".";;
+"5")txt[$i]="s";;
+"s")txt[$i]="5";;
+"1")txt[$i]="@";;
+"@")txt[$i]="1";;
+"2")txt[$i]="?";;
+"?")txt[$i]="2";;
+"4")txt[$i]="0";;
+"0")txt[$i]="4";;
+"/")txt[$i]="K";;
+"K")txt[$i]="/";;
+esac
+txtofus+="${txt[$i]}"
+done
+echo "$txtofus" | rev
+}
+ 
