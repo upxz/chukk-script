@@ -32,53 +32,6 @@ echo "$txtofus" | rev
 
 
 clear
-function chekKEY {
-[[ -z ${IP} ]] && IP=$(cat < /bin/ejecutar/IPcgh)
-[[ -z ${IP} ]] && IP=$(wget -qO- ifconfig.me)
-Key="$(cat /etc/cghkey)"
-_double=$(curl -sSL "https://raw.githubusercontent.com/emirjorge/Script-Z/master/CHUMO/Control/Control-Bot.txt")
-IiP="$(ofus "$Key" | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -o -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}')"
-[[ -e /file ]] && _double=$(cat < /file) ||  {
-wget -q -O /file https://raw.githubusercontent.com/emirjorge/Script-Z/master/CHUMO/Control/Control-Bot.txt
-_double=$(cat < /file)
-}
-_check2="$(echo -e "$_double" | grep ${IiP})"
-[[ ! -e /etc/folteto ]] && {
-wget --no-check-certificate -O /etc/folteto $IiP:81/drowkid01/checkIP.log 
-cheklist="$(cat /etc/folteto)"
-echo -e "$(echo -e "$cheklist" | grep ${IP})" > /etc/folteto
-}
-[[ -z ${_check2} ]] && {
-mss_='\n BotGEN NO AUTORIZADO POR @drowkid01 '
-cat <<EOF >/bin/menu
-clear && clear
-echo -e "\n\n\033[1;31m==================================================\n ?? ?? KEY BANEADA  ?? ! CONTACTE Su ADMINISTRADOR! \n==================================================\n ?? FECHA DE BANEO :$(date +%d/%m/%Y) HORA :$(date +%H:%M:%S) \n==================================================\n\n?? ${mss_} \n\n==================================================\n"
-echo -e " \e[1;32m     --- SI CONSIDERA QUE FUE UN ERROR  ---  " | pv -qL 60
-echo -e " \e[1;32m     -- ${mss_} --  " | pv -qL 60
-echo -e "\n \e[1;93m           --- TECLEA  \e[1;93m --- \e[1;97mcgh -fix\e[1;93m ---  " | pv -qL 50
-echo -e "\n\033[1;31m==================================================\n\n"
-#echo "/etc/adm-lite/menu" > /bin/menu && chmod +x /bin/menu
-EOF
-
-rm -f /etc/folteto
-rm -f /etc/adm-lite/menu*
- 			MENSAJE="${TTini}${m3ssg}MSG RECIVIDO${m3ssg}${TTfin}\n"
-			MENSAJE+=" ---------------------------------------------\n"
-			MENSAJE+=" IP Clon: ${IP} Rechazada\n"
-			MENSAJE+=" ---------------------------------------------\n"
-			MENSAJE+=" INSECTO DETECTADO EN V2ray MENU LITE\n"
-			MENSAJE+=" ---------------------------------------------\n"
-			MENSAJE+=" Key : ${Key}\n"
-			MENSAJE+=" ---------------------------------------------\n"
-			MENSAJE+=" HORA : $(printf '%(%D-%H:%M:%S)T')\n"
-			MENSAJE+=" ---------------------------------------------\n"
-			MENSAJE+="       ${rUlq} Bot ADMcgh de keyS ${rUlq}\n"
-			MENSAJE+="           ${pUn5A} By @drowkid01 ${pUn5A} \n"
-			MENSAJE+=" ---------------------------------------------\n"	
-			curl -s --max-time 10 -d "chat_id=$ID&disable_web_page_preview=1&text=$(echo -e "$MENSAJE")" $urlBOT &>/dev/null 	
-exit && exit
-}
-}
 config="/etc/v2ray/config.json"
 
 #echo -ne "\033[1;32m[ INST \033[1;31m + \033[1;32mWORK ] "
@@ -2017,10 +1970,8 @@ main(){
 }
 
 [[ $1 = "autoDel" ]] && {
-	chekKEY &> /dev/null 2>&1
 	autoDel
 } || {
-	chekKEY &> /dev/null 2>&1
 	autoDel
 	main
 }

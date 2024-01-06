@@ -1,10 +1,9 @@
 #!/bin/bash
 #24/10/2022
-[[ -e /bin/ejecutar/msg ]] && source /bin/ejecutar/msg > /dev/null || source <(curl -sSL https://raw.githubusercontent.com/emirjorge/Script-Z/master/CHUMO/msg-bar/msg) > /dev/null
+
 clear&&clear
 funINIT() {
 [[ $1 == 1 ]] && {
-echo 'source <(curl -sSL https://raw.githubusercontent.com/emirjorge/Script-Z/master/CHUMO/Recursos/v2ray1.sh)' > /bin/v2ray.menu
 chmod +x /bin/v2ray.menu 
 echo -e " RECUERDA QUE PARA UN INICIO RAPIDO SOLO DIGITA"
 msg -bar
